@@ -1,6 +1,7 @@
 package znet
 
 import (
+	"StudyZinx/ziface"
 	"fmt"
 	"net"
 )
@@ -65,4 +66,28 @@ func (s *Server) Start() {
 		}
 
 	}()
+}
+
+func (s *Server) Stop() {
+	fmt.Println("[Stop] Server, name ", s.Name)
+	// TODO Server.Stop() stop server, clean up the connection, resource, etc.
+}
+
+func (s *Server) Serve() {
+	s.Start()
+
+	// TODO Server.Serve() start server, and do some other things, like handle signal, etc.
+
+	// block
+	select {}
+}
+
+func NewServer(name string) ziface.Iserver {
+	s := &Server{
+		Name:      name,
+		IPVersion: "tcp4",
+		IP:        "0.0.0.0",
+		Port:      7777,
+	}
+	return s
 }
