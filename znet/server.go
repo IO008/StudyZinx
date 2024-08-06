@@ -2,7 +2,6 @@ package znet
 
 import (
 	"StudyZinx/ziface"
-	"errors"
 	"fmt"
 	"net"
 )
@@ -12,6 +11,7 @@ type Server struct {
 	IPVersion string
 	IP        string
 	Port      int
+	Router    ziface.IRouter
 }
 
 func (s *Server) Start() {
@@ -49,11 +49,10 @@ func (s *Server) Start() {
 
 			//3.2 TODO Server.Start() set max conn if more than max conn, close the conn
 
-			//3.3 handle conn business logic, handler and conn should be a bind
-			dealConn := NewConnection(conn, cid, CallBackToClient)
+			dealConn := NewConnection(conn, cid, s.Router)
 			cid++
 
-			//3.4 start current connection business
+			// start current connection business
 			go dealConn.Start()
 		}
 
@@ -74,23 +73,18 @@ func (s *Server) Serve() {
 	select {}
 }
 
+func (s *Server) AddRouter(router ziface.IRouter) {
+	s.Router = router
+	fmt.Println("Add Router success")
+}
+
 func NewServer(name string) ziface.Iserver {
 	s := &Server{
 		Name:      name,
 		IPVersion: "tcp4",
 		IP:        "0.0.0.0",
 		Port:      7777,
+		Router:    nil,
 	}
 	return s
-}
-
-// handle api for current client connection
-func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
-	fmt.Println("[Conn Handle] CallBackToClient")
-	// echo business
-	if _, err := conn.Write(data[:cnt]); err != nil {
-		fmt.Println("write back buf err ", err)
-		return errors.New("CallBackToClient error")
-	}
-	return nil
 }

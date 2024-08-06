@@ -9,4 +9,7 @@ type Iserver interface {
 
 	// start business services
 	Serve()
+
+	//router function: current servier registers a router business method, for client connection processing
+	AddRouter(router IRouter)
 }
