@@ -2,6 +2,7 @@ package znet
 
 import (
 	"StudyZinx/ziface"
+	"errors"
 	"fmt"
 	"net"
 )
@@ -34,6 +35,9 @@ func (s *Server) Start() {
 		}
 		fmt.Println("start Zinx server success, ", s.Name, " is listening...")
 
+		// TODO server.go should have a ID by auto generate
+		var cid uint32 = 0
+
 		//3. start server network connection
 		for {
 			//3.1 block wait for client connection
@@ -43,26 +47,14 @@ func (s *Server) Start() {
 				continue
 			}
 
-			//3.2 TODO Server.Start() set max conn
-			//3.3 TODO Server.Start() handle conn business logic, handler and conn should be a bind
+			//3.2 TODO Server.Start() set max conn if more than max conn, close the conn
 
-			go func() {
-				// while read client data
-				for {
-					buf := make([]byte, 512)
-					cnt, err := conn.Read(buf)
-					if err != nil {
-						fmt.Println("recv buf error: ", err)
-						continue
-					}
+			//3.3 handle conn business logic, handler and conn should be a bind
+			dealConn := NewConnection(conn, cid, CallBackToClient)
+			cid++
 
-					// echo
-					if _, err := conn.Write(buf[:cnt]); err != nil {
-						fmt.Println("write back buf error: ", err)
-						continue
-					}
-				}
-			}()
+			//3.4 start current connection business
+			go dealConn.Start()
 		}
 
 	}()
@@ -90,4 +82,15 @@ func NewServer(name string) ziface.Iserver {
 		Port:      7777,
 	}
 	return s
+}
+
+// handle api for current client connection
+func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
+	fmt.Println("[Conn Handle] CallBackToClient")
+	// echo business
+	if _, err := conn.Write(data[:cnt]); err != nil {
+		fmt.Println("write back buf err ", err)
+		return errors.New("CallBackToClient error")
+	}
+	return nil
 }
