@@ -13,14 +13,15 @@ type PingRouter struct {
 // Test Handle
 func (this *PingRouter) Handle(request ziface.IRequest) {
 	fmt.Println("Call Router Handle")
-	_, err := request.GetConnection().GetTcpConnection().Write([]byte("ping...ping...ping\n"))
+	fmt.Println("recv from client: msgID=", request.GetMsgID(), ", data=", string(request.GetData()))
+	err := request.GetConnection().SendMsg(1, []byte("ping...ping...ping"))
 	if err != nil {
-		fmt.Println("call back ping ping ping error")
+		fmt.Println("echo write error ", err)
 	}
 }
 
 func main() {
-	s := znet.NewServer("[zinx v0.3]")
+	s := znet.NewServer("[zinx v0.5]")
 	s.AddRouter(&PingRouter{})
 	s.Serve()
 }
