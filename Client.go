@@ -17,10 +17,15 @@ func main() {
 		return
 	}
 
+	var count = 0
 	for {
 		dp := znet.NewDataPack()
 		msg, _ := dp.Pack(znet.NewMsgPackage(0, []byte("ZinxV0.5 Client Test Message")))
+		msg1, _ := dp.Pack(znet.NewMsgPackage(1, []byte("ZinxV0.6 Client Test Message")))
 
+		if count%2 == 0 {
+			msg = msg1
+		}
 		_, err := conn.Write(msg)
 		if err != nil {
 			fmt.Println("write conn err ", err)
@@ -50,7 +55,7 @@ func main() {
 			}
 			fmt.Println("==> Recv Msg: ID=", msg.Id, ", len =", msg.DataLen, ", data =", string(msg.Data))
 		}
-
+		count++
 		time.Sleep(1 * time.Second)
 	}
 }

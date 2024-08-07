@@ -11,5 +11,5 @@ type Iserver interface {
 	Serve()
 
 	//router function: current servier registers a router business method, for client connection processing
-	AddRouter(router IRouter)
+	AddRouter(msgId uint32, router IRouter)
 }
