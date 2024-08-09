@@ -21,6 +21,9 @@ func (s *Server) Start() {
 
 	// start linster
 	go func() {
+
+		s.msgHandler.StartWorkerPool()
+
 		// 1.get a tcp addr
 		addr, err := net.ResolveTCPAddr(s.IPVersion, fmt.Sprintf("%s:%d", s.IP, s.Port))
 		if err != nil {
