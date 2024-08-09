@@ -19,6 +19,8 @@ type IConnection interface {
 	RemoteAddr() net.Addr
 
 	SendMsg(msgId uint32, data []byte) error
+
+	SendBuffMsg(msgId uint32, data []byte) error
 }
 
 // Define an interface for unified processing of connection services

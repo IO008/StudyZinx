@@ -10,7 +10,7 @@ type GlobalObj struct {
 	/*
 		server
 	*/
-	TCPServer ziface.Iserver
+	TCPServer ziface.IServer
 	Host      string
 	TcpPort   int
 	Name      string
@@ -23,6 +23,7 @@ type GlobalObj struct {
 	MaxConn          int
 	WorkerPoolSize   uint32
 	MaxWorkerTaskLen uint32
+	MaxMsgChanLen    uint32
 
 	/*
 		config file path
@@ -53,6 +54,7 @@ func init() {
 		MaxPacktSize:     4096,
 		WorkerPoolSize:   10,
 		MaxWorkerTaskLen: 1024,
+		MaxMsgChanLen:    10,
 	}
 	GlobalObject.Reload()
 }
