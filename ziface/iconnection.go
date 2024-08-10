@@ -21,7 +21,8 @@ type IConnection interface {
 	SendMsg(msgId uint32, data []byte) error
 
 	SendBuffMsg(msgId uint32, data []byte) error
-}
 
-// Define an interface for unified processing of connection services
-type HandFunc func(*net.TCPConn, []byte, int) error
+	SetProperty(key string, value interface{})
+	GetProperty(key string) (interface{}, error)
+	RemoveProperty(key string)
+}

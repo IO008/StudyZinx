@@ -35,14 +35,22 @@ func (this *HelloZinxRouter) Handle(request ziface.IRequest) {
 
 func DoConnectionBegin(conn ziface.IConnection) {
 	fmt.Println("DoConnectionBegin is Called...")
+	conn.SetProperty("Name", "studyZinx")
+	conn.SetProperty("Home", "https://github.com/IO008/StudyZinx")
 	if err := conn.SendMsg(2, []byte("DoConnection BEGIN")); err != nil {
 		fmt.Println(err)
 	}
 }
 
 func DoConnectionLost(conn ziface.IConnection) {
-	fmt.Println("DoConnectionLost is Called...")
-	fmt.Println("ConnID = ", conn.GetConnID(), " is Lost...")
+	if name, err := conn.GetProperty("Name"); err == nil {
+		fmt.Println("Conn Property Name = ", name)
+	}
+
+	if name, err := conn.GetProperty("Home"); err == nil {
+		fmt.Println("Conn Property Home = ", name)
+	}
+	fmt.Printf("DoConnectionLost(%d) is Called... \n", conn.GetConnID())
 }
 
 func main() {
