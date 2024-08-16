@@ -21,6 +21,8 @@ func main() {
 
 	mc := mock_client.NewMockClient(conn)
 
+	mc.ReceivedRegister()
+
 	mc.ShowLaunchUI()
 
 	go mc.LoopInput()

@@ -3,6 +3,7 @@ package mock_client
 import (
 	"StudyZinx/znet"
 	"fmt"
+	"io"
 	"net"
 	"strconv"
 	"sync"
@@ -89,6 +90,35 @@ func (mc *MockClient) sendRegister(result string) {
 		return
 	}
 	mc.conn.Write(msg)
+
+	mc.ReceivedRegister()
+}
+
+func (mc *MockClient) ReceivedRegister() {
+	headData := make([]byte, mc.dp.GetHeadLen())
+	_, err := io.ReadFull(mc.conn, headData)
+	if err != nil {
+		fmt.Println("read head error")
+		return
+	}
+
+	msgHead, err := mc.dp.Unpack(headData)
+	if err != nil {
+		fmt.Println("register unpack err:", err)
+		return
+	}
+
+	if msgHead.GetDataLen() > 0 {
+		msg := msgHead.(*znet.Message)
+		msg.Data = make([]byte, msg.GetDataLen())
+
+		_, err := io.ReadFull(mc.conn, msg.Data)
+		if err != nil {
+			fmt.Println("read register data err:", err)
+			return
+		}
+		fmt.Println("==> Recv Msg: ID=", msg.Id, ", len =", msg.DataLen, ", data =", msg.Data)
+	}
 }
 
 func (mc *MockClient) setCurrentCommand(command string) {

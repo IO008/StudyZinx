@@ -1,24 +1,11 @@
 package main
 
 import (
+	"StudyZinx/business"
 	"StudyZinx/ziface"
 	"StudyZinx/znet"
 	"fmt"
 )
-
-type PingRouter struct {
-	znet.BaseRouter
-}
-
-// Test Handle
-func (this *PingRouter) Handle(request ziface.IRequest) {
-	fmt.Println("Call Ping Handle")
-	fmt.Println("recv from client: msgID=", request.GetMsgID(), ", data=", string(request.GetData()))
-	err := request.GetConnection().SendMsg(0, []byte("ping...ping...ping"))
-	if err != nil {
-		fmt.Println("echo write error ", err)
-	}
-}
 
 type HelloZinxRouter struct {
 	znet.BaseRouter
@@ -59,7 +46,7 @@ func main() {
 	s.SetOnConnStart(DoConnectionBegin)
 	s.SetOnConnStop(DoConnectionLost)
 
-	s.AddRouter(0, &PingRouter{})
+	s.AddRouter(0, &business.RegisterRouter{})
 	s.AddRouter(1, &HelloZinxRouter{})
 
 	s.Serve()
