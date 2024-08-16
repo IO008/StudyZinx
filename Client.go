@@ -1,12 +1,14 @@
 package main
 
 import (
-	"StudyZinx/znet"
 	"fmt"
-	"io"
 	"net"
-	"time"
+
+	"StudyZinx/mock_client"
 )
+
+func StartClient(conn net.Conn) {
+}
 
 func main() {
 	fmt.Println("Client Test ... start")
@@ -17,7 +19,17 @@ func main() {
 		return
 	}
 
-	var count = 0
+	mc := mock_client.NewMockClient(conn)
+
+	mc.ShowLaunchUI()
+
+	go mc.LoopInput()
+
+	mc.Block()
+
+	fmt.Println("Client end")
+
+	/* var count = 0
 	for {
 		dp := znet.NewDataPack()
 		msg, _ := dp.Pack(znet.NewMsgPackage(0, []byte("ZinxV0.5 Client Test Message")))
@@ -57,5 +69,5 @@ func main() {
 		}
 		count++
 		time.Sleep(1 * time.Second)
-	}
+	} */
 }
