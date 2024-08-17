@@ -1,6 +1,7 @@
 package mock_client
 
 import (
+	"StudyZinx/protocal"
 	"StudyZinx/znet"
 	"fmt"
 	"io"
@@ -122,11 +123,12 @@ func (mc *MockClient) handleRouter(msg *znet.Message) {
 	default:
 		fmt.Println("unknown msg id=", msg.Id)
 	}
+	mc.setCurrentCommand("")
 }
 
 func (mc *MockClient) handleRegister(msg *znet.Message) {
-	fmt.Println("recv register response")
-	mc.setCurrentCommand("")
+	prototal := protocal.NewRegisterProtocal()
+	prototal.Deserialize(msg.GetData())
 }
 
 func (mc *MockClient) setCurrentCommand(command string) {
