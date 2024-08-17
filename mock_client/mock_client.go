@@ -62,22 +62,13 @@ func (mc *MockClient) Block() {
 			}
 
 		case result := <-mc.roter:
-			mc.handleRouter(result)
+			mc.sendMessage(mc.getCurrentCommand(), result)
 		}
 
 	}
 }
 
-func (mc *MockClient) handleRouter(result string) {
-	fmt.Println("handle router ", mc.getCurrentCommand(), result)
-	switch mc.getCurrentCommand() {
-	case register:
-		fmt.Println("user register", result)
-		mc.sendRegister(result)
-	}
-}
-
-func (mc *MockClient) sendRegister(result string) {
+func (mc *MockClient) sendMessage(register string, result string) {
 	num, err := strconv.Atoi(register)
 	if err != nil {
 		fmt.Println("register error", result)
@@ -91,34 +82,51 @@ func (mc *MockClient) sendRegister(result string) {
 	}
 	mc.conn.Write(msg)
 
-	mc.ReceivedRegister()
 }
 
-func (mc *MockClient) ReceivedRegister() {
-	headData := make([]byte, mc.dp.GetHeadLen())
-	_, err := io.ReadFull(mc.conn, headData)
-	if err != nil {
-		fmt.Println("read head error")
-		return
-	}
+func (mc *MockClient) LoopReceived() {
 
-	msgHead, err := mc.dp.Unpack(headData)
-	if err != nil {
-		fmt.Println("register unpack err:", err)
-		return
-	}
-
-	if msgHead.GetDataLen() > 0 {
-		msg := msgHead.(*znet.Message)
-		msg.Data = make([]byte, msg.GetDataLen())
-
-		_, err := io.ReadFull(mc.conn, msg.Data)
+	for {
+		headData := make([]byte, mc.dp.GetHeadLen())
+		_, err := io.ReadFull(mc.conn, headData)
 		if err != nil {
-			fmt.Println("read register data err:", err)
+			fmt.Println("read head error")
 			return
 		}
-		fmt.Println("==> Recv Msg: ID=", msg.Id, ", len =", msg.DataLen, ", data =", msg.Data)
+
+		msgHead, err := mc.dp.Unpack(headData)
+		if err != nil {
+			fmt.Println("recv unpack err:", err)
+			return
+		}
+
+		if msgHead.GetDataLen() > 0 {
+			msg := msgHead.(*znet.Message)
+			msg.Data = make([]byte, msg.GetDataLen())
+
+			_, err := io.ReadFull(mc.conn, msg.Data)
+			if err != nil {
+				fmt.Println("read recv data err:", err)
+				return
+			}
+			fmt.Println("==> Recv Msg: ID=", msg.Id, ", len =", msg.DataLen, ", data =", msg.Data)
+			mc.handleRouter(msg)
+		}
 	}
+}
+
+func (mc *MockClient) handleRouter(msg *znet.Message) {
+	switch strconv.FormatUint(uint64(msg.Id), 10) {
+	case register:
+		mc.handleRegister(msg)
+	default:
+		fmt.Println("unknown msg id=", msg.Id)
+	}
+}
+
+func (mc *MockClient) handleRegister(msg *znet.Message) {
+	fmt.Println("recv register response")
+	mc.setCurrentCommand("")
 }
 
 func (mc *MockClient) setCurrentCommand(command string) {
