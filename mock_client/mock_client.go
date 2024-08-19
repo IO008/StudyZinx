@@ -128,7 +128,10 @@ func (mc *MockClient) handleRouter(msg *znet.Message) {
 
 func (mc *MockClient) handleRegister(msg *znet.Message) {
 	prototal := protocal.NewRegisterProtocal()
-	prototal.Deserialize(msg.GetData())
+	err := prototal.Deserialize(msg.GetData())
+	if err != nil {
+		return
+	}
 }
 
 func (mc *MockClient) setCurrentCommand(command string) {

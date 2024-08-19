@@ -1,6 +1,6 @@
 package protocal
 
 type IProtocal interface {
-	Serialize() []byte
-	Deserialize(data []byte)
+	Serialize() ([]byte, error)
+	Deserialize(data []byte) error
 }

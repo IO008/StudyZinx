@@ -20,7 +20,12 @@ func (r *RegisterRouter) Handle(request ziface.IRequest) {
 	if protocal.IsSuccess {
 		protocal.Code = "123456"
 	}
-	err := request.GetConnection().SendMsg(request.GetMsgID(), protocal.Serialize())
+	bytes, err := protocal.Serialize()
+	if err != nil {
+		fmt.Println("register protocal serialize error ", err)
+		return
+	}
+	err = request.GetConnection().SendMsg(request.GetMsgID(), bytes)
 	if err != nil {
 		fmt.Println("write register error ", err)
 	}
