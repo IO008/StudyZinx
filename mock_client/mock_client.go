@@ -57,6 +57,8 @@ func (mc *MockClient) Block() {
 				return
 			case register:
 				mc.ui.ShowRegister()
+			case verificationCode:
+				fmt.Println("verificationCode")
 			default:
 				fmt.Println("unknown command")
 				mc.setCurrentCommand("")
@@ -69,8 +71,8 @@ func (mc *MockClient) Block() {
 	}
 }
 
-func (mc *MockClient) sendMessage(register string, result string) {
-	num, err := strconv.Atoi(register)
+func (mc *MockClient) sendMessage(commandCode string, result string) {
+	num, err := strconv.Atoi(commandCode)
 	if err != nil {
 		fmt.Println("register error", result)
 		return
@@ -78,9 +80,10 @@ func (mc *MockClient) sendMessage(register string, result string) {
 	}
 	msg, err := mc.dp.Pack(znet.NewMsgPackage(uint32(num), []byte(result)))
 	if err != nil {
-		fmt.Println("Pack error msg id=", register)
+		fmt.Println("Pack error msg id=", commandCode)
 		return
 	}
+	fmt.Printf("==> Send Msg: ID= %d len = %d data = % x  \n", num, len(msg), msg)
 	mc.conn.Write(msg)
 
 }
@@ -110,7 +113,7 @@ func (mc *MockClient) LoopReceived() {
 				fmt.Println("read recv data err:", err)
 				return
 			}
-			fmt.Println("==> Recv Msg: ID=", msg.Id, ", len =", msg.DataLen, ", data =", msg.Data)
+			fmt.Printf("==> Recv Msg: ID= %d len = %d data = % x \n", msg.Id, msg.DataLen, msg.Data)
 			mc.handleRouter(msg)
 		}
 	}
@@ -131,6 +134,13 @@ func (mc *MockClient) handleRegister(msg *znet.Message) {
 	err := prototal.Deserialize(msg.GetData())
 	if err != nil {
 		return
+	}
+
+	if prototal.IsExsit {
+		// TODO show chat list
+	} else {
+
+		mc.commandChan <- verificationCode
 	}
 }
 

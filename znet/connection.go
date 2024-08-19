@@ -63,6 +63,8 @@ func (c *Connection) StartReader() {
 			return
 		}
 
+		fmt.Printf("==> Recv headData: % x \n", headData)
+
 		msg, err := dp.Unpack(headData)
 		if err != nil {
 			fmt.Println("unpack err ", err)
@@ -79,6 +81,7 @@ func (c *Connection) StartReader() {
 				return
 			}
 		}
+		fmt.Printf("==> Recv data: % x \n", data)
 		msg.SetData(data)
 
 		req := Request{

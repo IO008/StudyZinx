@@ -1,6 +1,7 @@
 package business
 
 import (
+	"StudyZinx/db"
 	"StudyZinx/protocal"
 	"StudyZinx/ziface"
 	"StudyZinx/znet"
@@ -14,12 +15,10 @@ type RegisterRouter struct {
 func (r *RegisterRouter) Handle(request ziface.IRequest) {
 	fmt.Println("Call Ping Handle")
 	fmt.Println("recv from client: msgID=", request.GetMsgID(), ", data=", string(request.GetData()))
-
 	protocal := protocal.NewRegisterProtocal()
-	protocal.IsSuccess = true
-	if protocal.IsSuccess {
-		protocal.Code = "123456"
-	}
+	userTable := db.NewUserTable()
+	protocal.IsExsit = userTable.IsExist(string(request.GetData()))
+	protocal.Code = "123456"
 	bytes, err := protocal.Serialize()
 	if err != nil {
 		fmt.Println("register protocal serialize error ", err)

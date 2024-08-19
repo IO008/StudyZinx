@@ -3,9 +3,10 @@ package mock_client
 import "fmt"
 
 const (
-	register = "0"
-	login    = "1"
-	exit     = "2"
+	register         = "0"
+	login            = "1"
+	exit             = "2"
+	verificationCode = "3"
 )
 
 type UI struct {
@@ -31,4 +32,8 @@ func (ui *UI) ReadInput() string {
 
 func (ui *UI) ShowRegister() {
 	fmt.Println("input phone number")
+}
+
+func (ui *UI) ShowVerificationCode() {
+	fmt.Println("input verification code")
 }

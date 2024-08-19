@@ -1,0 +1,13 @@
+USE chat;
+
+CREATE TABLE users (
+    phone VARCHAR(20) PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO users (
+    phone, 
+    first_name, 
+    last_name
+) VALUES('123456789', 'first name test', 'last name test');
