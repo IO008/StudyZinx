@@ -50,7 +50,7 @@ func NewConnection(server ziface.IServer, conn *net.TCPConn, connID uint32, msgH
 // Goroutine that handles conn reading data
 func (c *Connection) StartReader() {
 	fmt.Println("Reader Goroutine is running")
-	defer fmt.Println(c.Conn.RemoteAddr().String(), " conn reader exit!")
+	defer fmt.Println(c.Conn.RemoteAddr().String(), "[conn reader exit!]")
 	defer c.Stop()
 
 	for {

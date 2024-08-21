@@ -47,6 +47,7 @@ func main() {
 	s.SetOnConnStop(DoConnectionLost)
 
 	s.AddRouter(business.Register, &business.RegisterRouter{})
+	s.AddRouter(business.VerificationCode, &business.VerificationCodeRouter{})
 	s.AddRouter(business.Exit, &HelloZinxRouter{})
 
 	s.Serve()
