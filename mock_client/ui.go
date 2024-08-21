@@ -1,12 +1,8 @@
 package mock_client
 
-import "fmt"
-
-const (
-	register         = "0"
-	login            = "1"
-	exit             = "2"
-	verificationCode = "3"
+import (
+	"StudyZinx/business"
+	"fmt"
 )
 
 type UI struct {
@@ -18,9 +14,9 @@ func NewUI() *UI {
 
 func (ui *UI) ShowLaunchUI() {
 	fmt.Println("ShowLaunchUI")
-	fmt.Printf("%s. Register Account \n", register)
-	fmt.Printf("%s. Login \n", login)
-	fmt.Printf("%s. Exit \n", exit)
+	fmt.Printf("%d. Register Account \n", business.Register)
+	fmt.Printf("%d. Login \n", business.Login)
+	fmt.Printf("%d. Exit \n", business.Exit)
 }
 
 func (ui *UI) ReadInput() string {
